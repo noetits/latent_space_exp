@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>ICE-Talk interface</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+    <link rel="icon" href="data:;base64,=">
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    
+    <script type="text/javascript" src="https://raw.githubusercontent.com/noetits/latent_space_exp/main/wavs/X.json"></script>
+    <script type="text/javascript" src="https://raw.githubusercontent.com/noetits/latent_space_exp/main/wavs/codes.json"></script>
+    <script src="https://cdn.jsdelivr.net/gh/nicolaspanel/numjs@0.15.1/dist/numjs.min.js"></script>
+</head>
+<body>
+<html>
+<body>
+
+ <!--   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+ <!--   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
+ <!--  <script>
+$(document).ready(function() {
+  // process a click on an emotion button
+  $('.option').on('click', function(event) {
+    // copy answer to hidden input
+    console.log($(this).html())
+    $('input[name="emotion"]').val($(this).html());
+    // erase any selected button
+    $('.option').removeClass('btn-info');
+    // highlight the current button
+    $(this).addClass('btn-info');
+    // don't submit the form
+    event.preventDefault();
+  });
+});
+</script>
+-->
+
+
+
+    <div style="text-align: center" id="interface">
+        <h2>ICE-Talk Demonstration</h2>
+      <!--Write a sentence and click on the image to hear it with the style you want.<br><br>
+      -->
+    <input id="text" type="hidden" size="40" placeholder="Enter Text" value="Hello, I am Catherine Byers, nice to meet you !"><br>
+  
+    
+      <p>Choose one sentence</p>
+    
+      <table style="solid;margin-left:auto;margin-right:auto;">
+        <tr>
+          <td><label for="ChoiceSample2-0">0</label></td>
+          <td><label for="ChoiceSample2-1">1</label></td>
+          <td><label for="ChoiceSample2-2">2</label></td>
+          <td><label for="ChoiceSample2-3">3</label></td>
+          <td><label for="ChoiceSample2-3">4</label></td>
+        </tr>
+        <tr>
+          <div id="choices">
+          <td><input type="radio" id="ChoiceSample2-0" name="ChoiceSample2" value="0" checked="checked"/></td>
+          <td><input type="radio" id="ChoiceSample2-1" name="ChoiceSample2" value="1" /></td>
+          <td><input type="radio" id="ChoiceSample2-2" name="ChoiceSample2" value="2" /></td>
+          <td><input type="radio" id="ChoiceSample2-3" name="ChoiceSample2" value="3" /></td>
+          <td><input type="radio" id="ChoiceSample2-4" name="ChoiceSample2" value="4" /></td>
+        </div>
+
+        </tr>
+      </table>
+    <!--
+  <div class="container mt-2">
+    <h3>Instructions</h3>
+    <p>
+          Rate the audio sample
+    </p>
+    <div class="row">
+  
+      <div class="form-group">
+          <audio controls src="${a1}">Your browser does not support this task</audio>
+          <br>
+      </div>
+  
+      <div class="col-4">
+        <h5>How natural does the laugh sound ?</h5>
+        <div class="btn-group-vertical">
+          <button class="btn btn-secondary option">Sentence 1</button>
+          <button class="btn btn-secondary option">Sentence 2</button>
+          <button class="btn btn-secondary option">Sentence 3</button>
+          <button class="btn btn-secondary option">Sentence 4</button>
+          <button class="btn btn-secondary option">Sentence 5</button>
+        </div>
+        <input type="hidden" name="emotion">
+      </div> 
+    </div>
+  </div>
+-->
+    
+    <!--  <div id="xRes">Top:<span></span></div> 
+    <div id="yRes">Left:<span></span></div> -
+    <p id="demo"></p>
+    <p id="demo2"></p> -->
+    <img src="https://raw.githubusercontent.com/noetits/latent_space_exp/main/plotplot.png" id="myImg"/><br>
+    <p id="message"></p>
+    <audio id="audio" controls autoplay hidden></audio><br>
+
+    <!--  <img src="/click" id="clickImg" width="200"/><br>
+    <img src="http://europe.wallonie.be/sites/default/files/logo_FEDER%2Bwallonie.png" id="federImg" width="200"/><br> -->
+    </div>
+    
+
+    <p id="x"></p>
+    <p id="y"></p>
+
+<script>
+
+var X_json = $.ajax({
+  url: "https://raw.githubusercontent.com/noetits/latent_space_exp/main/wavs/X.json",
+  dataType: "json",
+  success: function(response) {
+    $.each(response.Users, function(item) {
+      informationArray.push(item);
+    });
+    informationArray.push("success");
+  }
+});
+
+
+
+function map_range(x, x0, x1, y0, y1){
+    nRel=(x-x0)/(x1-x0);
+    // console.log(x0);
+    yRel=nRel*(y1-y0)+y0;
+    return yRel;
+    }
+
+function closest_node(node, nodes){
+idx=0;
+min=999999999999999999999;
+console.log('computing idx')
+for (i = 0; i < nodes.shape[0]; i++) {
+    distance=(node.subtract(nodes.pick(i))).pow(2).sum();
+    if(distance<min){
+    min=distance;
+    idx=i
+    }
+    }
+
+    //closest_index=((nodes-node)**2).sum(axis=1).argmin();
+    console.log('idx computed !')
+
+    return idx;
+}
+
+q('#text').focus()
+$(window).load(function(){
+        $(document).ready(function (event) {
+            //$('#myImg').draggable();
+            $('#myImg').on('click', function(event){
+                
+                var xRes = $('#xRes span');
+                var yRes = $('#yRes span');
+                
+                var image = $('img#myImg');
+                var img = document.getElementById('myImg');
+                var width = img.width        
+                var height = img.height
+                
+                xRes.html(image.offset().top);
+                yRes.html(image.offset().left);
+                
+                var x = event.clientX;
+                var y = event.clientY;
+            
+                //var coords = "X coords: " + x + ", Y coords: " + y;
+                //document.getElementById("demo").innerHTML = coords;
+                
+                var xRel=(x-image.offset().left)/width
+                var yRel=(y-image.offset().top)/height
+                //var coords2 = "X coords: " + xRel + ", Y coords: " + yRel;
+                  //  document.getElementById("demo2").innerHTML = coords2;
+                text = q('#text').value.trim()
+                if (text) {
+                    q('#message').textContent = 'Loading...'
+                    //q('#button').disabled = true
+                    q('#audio').hidden = true
+                    var sent_id = document.querySelector('input[name="ChoiceSample2"]:checked').value;
+                    synthesize(sent_id, xRel, yRel)
+                }
+            });
+        });
+    });
+
+    function q(selector) {return document.querySelector(selector)}
+    q('#text').focus()
+    function synthesize(text_id, x, y) {
+
+      // data box and rel box to map the click coordinates to the right audio file are taken from the plot resource of ice_tts_server.py
+      data_box = [[-1.29809415, -1.34797373],
+      [ 2.66996396,  1.88252201]];
+      rel_box= [[0.125, 0.11 ],
+      [0.9,   0.88 ]];
+      
+      xData=map_range(x, rel_box[0][0], rel_box[1][0], data_box[0][0], data_box[1][0]);
+      //console.log(xData);
+      yData=map_range(1-y, rel_box[0][1], rel_box[1][1], data_box[0][1], data_box[1][1]);
+
+      document.getElementById("x").innerHTML = xData;
+      document.getElementById("y").innerHTML = yData;
+      //function q(selector) {return document.querySelector(selector)}
+
+      
+      var node = nj.array([xData,yData]);
+      // var nodes = nj.array([[1,0],[0,0],[0,1]]);
+
+      
+      var nodes=nj.array(JSON.parse(JSON.parse(X_json.responseText)));
+      // var X=JSON.parse(X_json.responseText);
+      // console.log(X);
+
+      idx=closest_node(node, nodes)
+      
+      // console.log('xData:')
+      // console.log(xData)
+      // console.log('yData:')
+      // console.log(yData)
+      // console.log('idx:')
+      console.log(idx)
+
+      console.log('sent_'+text_id+'_code_'+idx+'.wav')
+
+
+      // fetch('http://decombastower:5000/audio?text=' + text + '&x='+x+ '&y='+y, {cache: 'no-cache'})
+      // fetch('/static/sent_0_code_'+idx+'.wav', {cache: 'no-cache'})
+      fetch('https://raw.githubusercontent.com/noetits/latent_space_exp/main/wavs/sent_'+text_id+'_code_'+idx+'.wav', {cache: 'no-cache'})
+        .then(function(res) {
+          if (!res.ok) throw Error(res.statusText)
+          return res.blob()
+        }).then(function(blob) {
+          q('#message').textContent = ''
+          //q('#button').disabled = false
+          q('#audio').src = URL.createObjectURL(blob)
+          q('#audio').hidden = false
+        }).catch(function(err) {
+          q('#message').textContent = 'Error: ' + err.message
+          //q('#button').disabled = false
+        })
+    }
+    
+</script>
+
+</body>
+</html>
+
+</body>
+</html>
